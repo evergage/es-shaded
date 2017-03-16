@@ -4,18 +4,27 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>sk.eset.dbsystems</groupId>
+    <groupId>com.evergage.thirdparty.elasticsearch</groupId>
     <artifactId>es-shaded</artifactId>
-    <version>1.2</version>
+    <version>5.2.2</version>
+
+    <description>Lightly-shaded Elasticsearch.</description>
 
     <properties>
-        <elasticsearch.version>2.4.1</elasticsearch.version>
+        <es.shade.prefix>shaded.elasticsearch</es.shade.prefix>
     </properties>
+
     <dependencies>
         <dependency>
-            <groupId>org.elasticsearch</groupId>
-            <artifactId>elasticsearch</artifactId>
-            <version>${elasticsearch.version}</version>
+            <groupId>org.elasticsearch.client</groupId>
+            <artifactId>transport</artifactId>
+            <version>${project.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.elasticsearch.plugin</groupId>
+                    <artifactId>transport-netty3-client</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
     </dependencies>
 
@@ -24,7 +33,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
-                <version>2.4.1</version>
+                <version>3.0.0</version>
                 <executions>
                     <execution>
                         <phase>package</phase>
@@ -32,15 +41,49 @@
                             <goal>shade</goal>
                         </goals>
                         <configuration>
+                            <artifactSet>
+                                <includes>
+                                    <include>joda-time:*</include>
+                                    <include>org.elasticsearch:*</include>
+                                    <include>org.elasticsearch.client:*</include>
+                                    <include>org.elasticsearch.plugin:*</include>
+                                    <include>com.fasterxml.jackson.core:*</include>
+                                    <include>com.fasterxml.jackson.dataformat:*</include>
+                                    <include>org.yaml:*</include>
+                                    <include>org.apache.httpcomponents:*</include>
+                                    <include>commons-codec:*</include>
+                                    <include>commons-logging:*</include>
+                                </includes>
+                            </artifactSet>
                             <relocations>
                                 <relocation>
+                                    <pattern>com.fasterxml.jackson</pattern>
+                                    <shadedPattern>${es.shade.prefix}.jackson</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>org.apache.http</pattern>
+                                    <shadedPattern>${es.shade.prefix}.apache.http</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>org.apache.commons</pattern>
+                                    <shadedPattern>${es.shade.prefix}.apache.commons</shadedPattern>
+                                </relocation>
+                                <relocation>
                                     <pattern>org.joda</pattern>
-                                    <shadedPattern>my.elasticsearch.joda</shadedPattern>
+                                    <shadedPattern>${es.shade.prefix}.joda</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>org.yaml</pattern>
+                                    <shadedPattern>${es.shade.prefix}.yaml</shadedPattern>
                                 </relocation>
                             </relocations>
                             <transformers>
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer" />
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer" />
                             </transformers>
+                            <createSourcesJar>true</createSourcesJar>
+                            <shadeSourcesContent>true</shadeSourcesContent>
+                            <promoteTransitiveDependencies>true</promoteTransitiveDependencies>
                         </configuration>
                     </execution>
                 </executions>
