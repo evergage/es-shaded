@@ -6,13 +6,13 @@
 
     <groupId>com.evergage.thirdparty.elasticsearch</groupId>
     <artifactId>elasticsearch-shaded</artifactId>
-    <version>5.4.0-evg1</version>  <!-- SYNC WITH property elasticsearch.version BELOW -->
+    <version>5.4.3-evg1</version>  <!-- SYNC WITH property elasticsearch.version BELOW -->
 
     <description>Lightly-shaded Elasticsearch.</description>
 
     <properties>
         <!-- SYNC WITH project version ABOVE -->
-        <elasticsearch.version>5.4.0</elasticsearch.version>
+        <elasticsearch.version>5.4.3</elasticsearch.version>
         <!-- DOUBLE-CHECK THIS VERSION ON EVERY UPGRADE -->
         <spatial4j.version>0.6</spatial4j.version>
         <es.shade.prefix>shaded.elasticsearch</es.shade.prefix>
