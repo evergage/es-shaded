@@ -6,7 +6,7 @@
 
     <groupId>com.evergage.thirdparty.elasticsearch</groupId>
     <artifactId>elasticsearch-shaded</artifactId>
-    <version>5.4.3-evg1</version>  <!-- SYNC WITH property elasticsearch.version BELOW -->
+    <version>5.4.3-evg2</version>  <!-- SYNC WITH property elasticsearch.version BELOW -->
 
     <description>Lightly-shaded Elasticsearch.</description>
 
@@ -23,6 +23,15 @@
             <groupId>org.elasticsearch.client</groupId>
             <artifactId>transport</artifactId>
             <version>${elasticsearch.version}</version>
+            <!-- Even though we do not include the Lucene jars in the shade inclusions below, the shade plugin still 
+                 includes them in the shaded jar's pom, which can cause Snyk to report false vulnerabilites for
+                 Lucene jars. Excluding all Lucene jars here does the trick. -->
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.lucene</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>    
         </dependency>
         <!-- Hard inclusion of an optional dependency, for geo queries -->
         <dependency>
@@ -37,7 +46,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
-                <version>3.0.0</version>
+                <version>3.2.4</version>
                 <executions>
                     <execution>
                         <phase>package</phase>
